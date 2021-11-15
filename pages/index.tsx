@@ -1,12 +1,35 @@
-import type { NextPage } from 'next'
-import Head from 'next/head'
-import Image from 'next/image'
-import MainLayout from '../layouts/MainLayout'
-import styles from '../styles/Home.module.css'
+import { Button, Typography, useTheme } from "@mui/material";
+import type { NextPage } from "next";
+import React from "react";
+import { getAllBudgets } from "../store/history-slice";
+import { useAppSelector } from "../store/hooks";
+import { NEW_MONTH_IMPORT_PATH } from "./new-month/import";
+import MonthSummary from "../components/Summary/MonthSummary";
+
+export const HOME_PATH = "/";
 
 const Home: NextPage = () => {
-  return <MainLayout></MainLayout>
-  
-}
+  const history = useAppSelector(getAllBudgets);
+  const theme = useTheme();
 
-export default Home
+  const placeholder = (
+    <>
+      <Typography variant="h4" sx={{ color: theme.palette.grey["400"] }}>
+        You don&apos;t have any data saved yet
+      </Typography>
+      <Typography variant="h5" sx={{ mt: 2, color: theme.palette.grey["400"] }}>
+        Please add your first monthly budget!
+      </Typography>
+      <Button variant="contained" sx={{ mt: 2 }} href={NEW_MONTH_IMPORT_PATH}>
+        New month
+      </Button>
+    </>
+  );
+
+  const component =
+    history.length > 0 ? <MonthSummary budget={history[0]} /> : placeholder;
+
+  return <>{component}</>;
+};
+
+export default Home;
