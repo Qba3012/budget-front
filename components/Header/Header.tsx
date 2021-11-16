@@ -8,12 +8,16 @@ import {
 } from "@mui/material";
 import { FC } from "react";
 import { useRouter } from "next/router";
-import LoginOutlinedIcon from "@mui/icons-material/LoginOutlined";
+import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 
 const Header: FC = () => {
   const router = useRouter();
   const theme = useTheme();
+
+  const handleLogout = () => {
+    router.push("/login");
+  };
 
   const renderTitle = () => {
     switch (true) {
@@ -48,9 +52,10 @@ const Header: FC = () => {
         <Button
           variant="outlined"
           color={"primary"}
-          startIcon={<LoginOutlinedIcon />}
+          startIcon={<LogoutOutlinedIcon />}
+          onClick={handleLogout}
         >
-          Login
+          Logout
         </Button>
       </Toolbar>
     </AppBar>

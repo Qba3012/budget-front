@@ -5,6 +5,7 @@ import { getAllBudgets } from "../store/history-slice";
 import { useAppSelector } from "../store/hooks";
 import { NEW_MONTH_IMPORT_PATH } from "./new-month/import";
 import MonthSummary from "../components/Summary/MonthSummary";
+import MainLayout from "../layouts/MainLayout";
 
 export const HOME_PATH = "/";
 
@@ -29,7 +30,7 @@ const Home: NextPage = () => {
   const component =
     history.length > 0 ? <MonthSummary budget={history[0]} /> : placeholder;
 
-  return <>{component}</>;
+  return <MainLayout>{component}</MainLayout>;
 };
 
 export default Home;

@@ -3,7 +3,6 @@ import { Provider } from "react-redux";
 import "../styles/globals.css";
 import type { AppProps } from "next/app";
 import { createTheme, responsiveFontSizes, ThemeProvider } from "@mui/material";
-import MainLayout from "../layouts/MainLayout";
 import { SnackbarProvider } from "notistack";
 import { RED_GRADIENT } from "../utils/Constants";
 
@@ -61,9 +60,7 @@ function MyApp({ Component, pageProps }: AppProps) {
     <ThemeProvider theme={theme}>
       <Provider store={store}>
         <SnackbarProvider maxSnack={3}>
-          <MainLayout>
-            <Component {...pageProps} />
-          </MainLayout>
+          <Component {...pageProps} />
         </SnackbarProvider>
       </Provider>
     </ThemeProvider>

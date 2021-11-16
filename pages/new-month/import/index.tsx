@@ -1,4 +1,3 @@
-import { FC } from "react";
 import { Button } from "@mui/material";
 import { useSelector } from "react-redux";
 import {
@@ -14,10 +13,12 @@ import CsvImport from "../../../components/NewMonth/NewMonthImport/CsvImport/Csv
 import NewMonthStepper from "../../../components/NewMonth/NewMonthStepper/NewMonthStepper";
 import { NEW_MONTH_REVIEW_PATH } from "../review";
 import { useAppDispatch } from "../../../store/hooks";
+import { NextPage } from "next";
+import MainLayout from "../../../layouts/MainLayout";
 
 export const NEW_MONTH_IMPORT_PATH = "/new-month/import";
 
-const NewMonthImportPage: FC = () => {
+const NewMonthImportPage: NextPage = () => {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const data = useSelector(getCsvData);
@@ -61,7 +62,7 @@ const NewMonthImportPage: FC = () => {
   };
 
   return (
-    <>
+    <MainLayout>
       <NewMonthStepper step={0} />
       <CsvImport />
       {data && <CsvTable />}
@@ -76,7 +77,7 @@ const NewMonthImportPage: FC = () => {
           Add +
         </Button>
       )}
-    </>
+    </MainLayout>
   );
 };
 

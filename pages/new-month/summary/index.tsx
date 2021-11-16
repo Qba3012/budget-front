@@ -1,4 +1,4 @@
-import { FC, useEffect } from "react";
+import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import NewMonthStepper from "../../../components/NewMonth/NewMonthStepper/NewMonthStepper";
 import { getBudget, getCsvData } from "../../../store/new-month-slice";
@@ -9,10 +9,12 @@ import MonthExpensesSummary from "../../../components/Summary/MonthExpensesSumma
 import MonthIncomesSummary from "../../../components/Summary/MonthIncomesSummary";
 import { useSnackbar } from "notistack";
 import NewMonthAccountInput from "../../../components/NewMonth/NewMonthAccountInput/NewMonthAccountInput";
+import type { NextPage } from "next";
+import MainLayout from "../../../layouts/MainLayout";
 
 export const NEW_MONTH_SUMMARY_PATH = "/new-month/summary";
 
-const NewMonthSummary: FC = () => {
+const NewMonthSummary: NextPage = () => {
   const budget = useSelector(getBudget);
   const csvData = useSelector(getCsvData);
   const router = useRouter();
@@ -52,7 +54,7 @@ const NewMonthSummary: FC = () => {
   }, []);
 
   return (
-    <>
+    <MainLayout>
       <NewMonthStepper step={2} />
       <MonthHeaderSummary
         month={budget.dateLabel}
@@ -66,7 +68,7 @@ const NewMonthSummary: FC = () => {
         totalIncomesValue={budget.totalIncomesValue}
       />
       <NewMonthAccountInput />
-    </>
+    </MainLayout>
   );
 };
 
