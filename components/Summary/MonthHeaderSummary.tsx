@@ -83,7 +83,7 @@ const MonthHeaderSummary: FC<Props> = ({
             sx={{ flexGrow: 1, color: theme.palette.warning.main }}
             textAlign="end"
           >
-            {allExpensesValue.toLocaleString()}
+            {allExpensesValue && allExpensesValue.toLocaleString()}
           </Typography>
         </Box>
         <Divider sx={{ marginTop: 5, marginBottom: 5 }} />
@@ -112,7 +112,7 @@ const MonthHeaderSummary: FC<Props> = ({
             sx={{ flexGrow: 1, color: theme.palette.secondary.main }}
             textAlign="end"
           >
-            {allIncomesValue.toLocaleString()}
+            {allIncomesValue && allIncomesValue.toLocaleString()}
           </Typography>
         </Box>
       </CardContent>

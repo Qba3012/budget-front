@@ -1,17 +1,26 @@
 import { Button, Typography, useTheme } from "@mui/material";
-import type { NextPage } from "next";
-import React from "react";
-import { getAllBudgets } from "../store/history-slice";
-import { useAppSelector } from "../store/hooks";
+import type { GetStaticProps, InferGetStaticPropsType, NextPage } from "next";
+import React, { useEffect } from "react";
 import { NEW_MONTH_IMPORT_PATH } from "./new-month/import";
 import MonthSummary from "../components/Summary/MonthSummary";
 import MainLayout from "../layouts/MainLayout";
+import axios from "axios";
+import Budget from "../model/Budget";
+import { useRouter } from "next/router";
 
 export const HOME_PATH = "/";
 
-const Home: NextPage = () => {
-  const history = useAppSelector(getAllBudgets);
+const Home: NextPage = ({
+  budget,
+}: InferGetStaticPropsType<typeof getStaticProps>) => {
   const theme = useTheme();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (router.query.refresh) {
+      router.replace(router.basePath);
+    }
+  }, []);
 
   const placeholder = (
     <>
@@ -27,10 +36,28 @@ const Home: NextPage = () => {
     </>
   );
 
-  const component =
-    history.length > 0 ? <MonthSummary budget={history[0]} /> : placeholder;
+  const component = budget ? (
+    <MonthSummary budget={JSON.parse(budget)} />
+  ) : (
+    placeholder
+  );
 
   return <MainLayout>{component}</MainLayout>;
 };
 
 export default Home;
+
+export const getStaticProps: GetStaticProps = async () => {
+  const response = await axios.get(
+    (process.env.API_LATEST && process.env.API_LATEST) ||
+      "http://localhost:8080/budgets/latest"
+  );
+
+  if (response.status == 200 && response.data) {
+    return {
+      props: { budget: JSON.stringify(Budget.fromApiResponse(response.data)) },
+      revalidate: 60,
+    };
+  }
+  return { props: { budget: null } };
+};

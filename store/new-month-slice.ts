@@ -3,8 +3,8 @@ import { ParseResult } from "papaparse";
 import BudgetItem from "../model/BudgetItem";
 import BudgetItemField from "../model/BudgetItemField";
 import { SELECT_PLACEHOLDER } from "../utils/Constants";
-import Type from "../model/Type";
-import Category from "../model/Category";
+import Type, { typeFromString } from "../model/Type";
+import Category, { categoryFromString } from "../model/Category";
 import { RootState } from "./index";
 import { BudgetInterface } from "../model/BudgetInterface";
 import Budget from "../model/Budget";
@@ -134,7 +134,7 @@ const newMonthSlice = createSlice({
         updatedBudgetItem.type =
           action.payload.type == SELECT_PLACEHOLDER
             ? null
-            : Type[action.payload.type.toUpperCase() as keyof typeof Type];
+            : typeFromString(action.payload.type.toUpperCase());
       }
     },
     setBudgetItemCategory(
@@ -146,9 +146,7 @@ const newMonthSlice = createSlice({
         updatedBudgetItem.category =
           action.payload.category == SELECT_PLACEHOLDER
             ? null
-            : Category[
-                action.payload.category.toUpperCase() as keyof typeof Category
-              ];
+            : categoryFromString(action.payload.category);
       }
     },
     convertToBudgetItems(state) {
@@ -172,7 +170,9 @@ const newMonthSlice = createSlice({
       });
     },
     populateBudget(state, action: PayloadAction<Date>) {
-      state.budget = { ...new Budget(action.payload, state.budgetItems) };
+      state.budget = {
+        ...Budget.fromBudgetItems(action.payload, state.budgetItems),
+      };
     },
   },
 });

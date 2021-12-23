@@ -46,7 +46,7 @@ const MonthIncomesSummary: FC<Props> = ({ incomes, totalIncomesValue }) => {
           >
             <Typography variant={"h6"}>Total</Typography>
             <Typography variant={"h5"}>
-              {totalIncomesValue.toLocaleString()}
+              {totalIncomesValue && totalIncomesValue.toLocaleString()}
             </Typography>
           </Box>
           <Box
@@ -87,44 +87,48 @@ const MonthIncomesSummary: FC<Props> = ({ incomes, totalIncomesValue }) => {
                 marginTop: 5,
               }}
             >
-              {incomes.map((item) => (
-                <TableRow key={`item-${item.title}`} id={`item-${item.title}`}>
-                  <TableCell sx={{ width: "20%" }}>
-                    <Typography
-                      variant={"body2"}
-                      color={theme.palette.grey["600"]}
-                    >
-                      {item.date}
-                    </Typography>
-                  </TableCell>
-                  <TableCell
-                    sx={{
-                      maxWidth: "10px",
-                    }}
+              {incomes &&
+                incomes.map((item) => (
+                  <TableRow
+                    key={`item-${item.title}`}
+                    id={`item-${item.title}`}
                   >
-                    <Typography
-                      variant={"body2"}
-                      color={theme.palette.grey["600"]}
+                    <TableCell sx={{ width: "20%" }}>
+                      <Typography
+                        variant={"body2"}
+                        color={theme.palette.grey["600"]}
+                      >
+                        {item.date}
+                      </Typography>
+                    </TableCell>
+                    <TableCell
                       sx={{
-                        textOverflow: "ellipsis",
-                        overflow: "hidden",
-                        whiteSpace: "nowrap",
+                        maxWidth: "10px",
                       }}
                     >
-                      {item.title}
-                    </Typography>
-                  </TableCell>
-                  <TableCell sx={{ width: "20%" }}>
-                    <Typography
-                      variant={"body2"}
-                      color={theme.palette.grey["600"]}
-                      textAlign={"end"}
-                    >
-                      {item.amount}
-                    </Typography>
-                  </TableCell>
-                </TableRow>
-              ))}
+                      <Typography
+                        variant={"body2"}
+                        color={theme.palette.grey["600"]}
+                        sx={{
+                          textOverflow: "ellipsis",
+                          overflow: "hidden",
+                          whiteSpace: "nowrap",
+                        }}
+                      >
+                        {item.title}
+                      </Typography>
+                    </TableCell>
+                    <TableCell sx={{ width: "20%" }}>
+                      <Typography
+                        variant={"body2"}
+                        color={theme.palette.grey["600"]}
+                        textAlign={"end"}
+                      >
+                        {item.amount}
+                      </Typography>
+                    </TableCell>
+                  </TableRow>
+                ))}
             </TableBody>
           </Table>
         </Collapse>

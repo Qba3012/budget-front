@@ -11,6 +11,8 @@ import { useSnackbar } from "notistack";
 import NewMonthAccountInput from "../../../components/NewMonth/NewMonthAccountInput/NewMonthAccountInput";
 import type { NextPage } from "next";
 import MainLayout from "../../../layouts/MainLayout";
+import axios from "axios";
+import { BudgetApiDto } from "../../../model/api/BudgetApiDto";
 
 export const NEW_MONTH_SUMMARY_PATH = "/new-month/summary";
 
@@ -45,7 +47,32 @@ const NewMonthSummary: NextPage = () => {
   const handleSaveButtonClick = () => {
     const isError = validateBudget();
     if (!isError) {
-      router.push("/");
+      const budgetDto = BudgetApiDto.fromBudget(budget);
+      console.log(JSON.stringify(budgetDto));
+      axios
+        .post(
+          (process.env.NEXT_PUBLIC_BUDGET_API &&
+            process.env.NEXT_PUBLIC_BUDGET_API) ||
+            "http://localhost:8080/budgets",
+          budgetDto
+        )
+        .then((response) => {
+          if (response.status == 200) {
+            router.push("/?refresh=yes");
+          } else {
+            enqueueSnackbar(response.data?.message, {
+              variant: "error",
+              anchorOrigin: { vertical: "bottom", horizontal: "right" },
+            });
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+          enqueueSnackbar("Server error, try again later", {
+            variant: "error",
+            anchorOrigin: { vertical: "bottom", horizontal: "right" },
+          });
+        });
     }
   };
 

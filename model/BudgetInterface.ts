@@ -24,6 +24,7 @@ export type CategorySortedBudget = {
 export interface BudgetInterface {
   month: number;
   year: number;
+  slug: string;
   dateLabel: string;
   totalIncomesValue: number;
   totalExpensesValue: number;

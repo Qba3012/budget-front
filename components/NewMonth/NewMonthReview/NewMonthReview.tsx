@@ -99,7 +99,8 @@ const NewMonthReview: FC = () => {
 
   const handleButtonClick = () => {
     const error = budgetItems.find(
-      (item) => item.type === null || item.category === null
+      (item) =>
+        (item.type === null || item.category === null) && item.amount < 0
     );
     if (error) {
       enqueueSnackbar("Each budget item must have type and category", {

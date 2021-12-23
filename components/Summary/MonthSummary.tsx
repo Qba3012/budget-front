@@ -14,8 +14,8 @@ const MonthSummary: FC<Props> = ({ budget }) => {
     <>
       <MonthHeaderSummary
         month={budget.dateLabel}
-        allIncomesValue={0}
-        allExpensesValue={0}
+        allIncomesValue={budget.totalIncomesValue}
+        allExpensesValue={budget.totalExpensesValue}
       />
       <MonthExpensesSummary expenses={budget.expenses} />
       <MonthIncomesSummary

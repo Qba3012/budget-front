@@ -1,5 +1,5 @@
-import Type from "./Type";
-import Category from "./Category";
+import Type, { typeFromString } from "./Type";
+import Category, { categoryFromString } from "./Category";
 import { v4 } from "uuid";
 
 class BudgetItem {
@@ -10,13 +10,19 @@ class BudgetItem {
   type: Type | null;
   category: Category | null;
 
-  constructor(date: string, title: string, amount: number) {
+  constructor(
+    date: string,
+    title: string,
+    amount: number,
+    type?: string,
+    category?: string
+  ) {
     this.id = v4();
-    this.date = date.replace(/\s+/g, " ").trim();
+    this.date = new Date(date.replace(/\s+/g, " ").trim()).toLocaleDateString();
     this.title = title.replace(/\s+/g, " ").trim();
     this.amount = amount;
-    this.type = Type.REGULAR;
-    this.category = Category.TRAVEL;
+    this.type = type ? typeFromString(type) : null;
+    this.category = category ? categoryFromString(category) : null;
   }
 }
 

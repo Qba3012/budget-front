@@ -40,29 +40,32 @@ const MonthExpensesSummary: FC<Props> = ({ expenses }) => {
               flexDirection: "column",
             }}
           >
-            {expenses.map((item) => (
-              <Box
-                key={item.type}
-                sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  mt: 3,
-                }}
-              >
-                <Typography variant={"h6"}>
-                  {toCapitalCase(item.type)}
-                </Typography>
-                <Typography variant={"h5"}>
-                  {item.sum.toLocaleString()}
-                </Typography>
-              </Box>
-            ))}
+            {expenses &&
+              expenses.map((item) => (
+                <Box
+                  key={item.type}
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    mt: 3,
+                  }}
+                >
+                  <Typography variant={"h6"}>
+                    {toCapitalCase(item.type)}
+                  </Typography>
+                  <Typography variant={"h5"}>
+                    {item.sum.toLocaleString()}
+                  </Typography>
+                </Box>
+              ))}
           </Box>
           <Box sx={{ flexGrow: 2, display: "flex", justifyContent: "center" }}>
-            <CustomRadialChart
-              data={expenses}
-              selection={expenses[typeSelection]?.type}
-            />
+            {expenses && (
+              <CustomRadialChart
+                data={expenses}
+                selection={expenses[typeSelection]?.type}
+              />
+            )}
           </Box>
         </Box>
         <Tabs
@@ -79,28 +82,28 @@ const MonthExpensesSummary: FC<Props> = ({ expenses }) => {
             borderColor: theme.palette.grey["200"],
           }}
         >
-          {expenses.map((item) => (
-            <Tab
-              key={item.type}
-              label={item.type}
-              sx={{
-                padding: "1.5rem",
-                paddingBottom: "1.5rem",
-                fontSize: theme.typography.fontSize,
-                fontWeight: theme.typography.fontWeightBold,
-              }}
-            />
-          ))}
+          {expenses &&
+            expenses.map((item) => (
+              <Tab
+                key={item.type}
+                label={item.type}
+                sx={{
+                  padding: "1.5rem",
+                  paddingBottom: "1.5rem",
+                  fontSize: theme.typography.fontSize,
+                  fontWeight: theme.typography.fontWeightBold,
+                }}
+              />
+            ))}
         </Tabs>
         <Box>
-          {
+          {expenses &&
             expenses.map((typeSortedBudget) => (
               <SortedBudgetItemsList
                 key={typeSortedBudget.type}
                 typeSortedBudget={typeSortedBudget}
               />
-            ))[typeSelection]
-          }
+            ))[typeSelection]}
         </Box>
       </CardContent>
     </Card>
