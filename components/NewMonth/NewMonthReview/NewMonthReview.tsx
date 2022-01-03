@@ -1,4 +1,4 @@
-import { ChangeEvent, FC, useState } from "react";
+import { ChangeEvent, FC, useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -14,7 +14,6 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { useSelector } from "react-redux";
 import BudgetItem from "../../../model/BudgetItem";
 import Type from "../../../model/Type";
 import Category from "../../../model/Category";
@@ -22,18 +21,20 @@ import EditableText from "../../EditableText/EditableText";
 import { SELECT_PLACEHOLDER } from "../../../utils/Constants";
 import { useSnackbar } from "notistack";
 import { useRouter } from "next/router";
+import { useAppDispatch, useAppSelector } from "../../../store/hooks";
+import { CalendarTodayOutlined } from "@mui/icons-material";
+import { NEW_MONTH_SUMMARY_PATH } from "../../../pages/new-month/summary";
+import BudgetItemField from "../../../model/BudgetItemField";
+import { getColumnLabels, getCsvData } from "../../../store/csv-import-slice";
 import {
   getAllBudgetItems,
-  populateBudget,
   setBudgetItemAmount,
   setBudgetItemCategory,
   setBudgetItemDate,
   setBudgetItemTitle,
   setBudgetItemType,
-} from "../../../store/new-month-slice";
-import { useAppDispatch } from "../../../store/hooks";
-import { CalendarTodayOutlined } from "@mui/icons-material";
-import { NEW_MONTH_SUMMARY_PATH } from "../../../pages/new-month/summary";
+  setData,
+} from "../../../store/import-review-slice";
 
 const months = [] as string[];
 
@@ -48,60 +49,54 @@ for (let i = 0; i < 12; i++) {
 
 const NewMonthReview: FC = () => {
   const [month, setMonth] = useState(months[0]);
-  const budgetItems = useSelector(getAllBudgetItems);
+  const csvData = useAppSelector(getCsvData);
+  const columnLabels = useAppSelector(getColumnLabels);
+  const budgetItems = useAppSelector(getAllBudgetItems);
   const dispatch = useAppDispatch();
   const router = useRouter();
   const { enqueueSnackbar } = useSnackbar();
   const types = [SELECT_PLACEHOLDER, Type.REGULAR, Type.VARIABLE];
 
-  const categories = [
-    SELECT_PLACEHOLDER,
-    Category.CAR,
-    Category.GROCERY,
-    Category.MEDICAL,
-    Category.TRAVEL,
-  ];
+  const categories = [SELECT_PLACEHOLDER, Category.CAR, Category.GROCERY, Category.MEDICAL, Category.TRAVEL];
 
-  const handleDateChange = (
-    event: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>,
-    id: string
-  ) => {
+  useEffect(() => {
+    if (!csvData) {
+      return;
+    }
+    const budgetItems = csvData.map((row) => {
+      const dateIndex = columnLabels.indexOf(BudgetItemField.DATE);
+      const titleIndex = columnLabels.indexOf(BudgetItemField.TITLE);
+      const amountIndex = columnLabels.indexOf(BudgetItemField.AMOUNT);
+      const amount = Number.parseFloat(row.data[amountIndex].replaceAll(" ", "").replaceAll(",", "."));
+      return {
+        ...new BudgetItem(row.data[dateIndex], row.data[titleIndex], isNaN(amount) ? 0 : amount),
+      };
+    });
+    dispatch(setData(budgetItems));
+  }, []);
+
+  const handleDateChange = (event: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>, id: string) => {
     dispatch(setBudgetItemDate({ id: id, date: event.target.value }));
   };
 
-  const handleTitleChange = (
-    event: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>,
-    id: string
-  ) => {
+  const handleTitleChange = (event: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>, id: string) => {
     dispatch(setBudgetItemTitle({ id: id, title: event.target.value }));
   };
 
-  const handleAmountChange = (
-    event: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>,
-    id: string
-  ) => {
+  const handleAmountChange = (event: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>, id: string) => {
     dispatch(setBudgetItemAmount({ id: id, amount: event.target.value }));
   };
 
-  const handleTypeChange = (
-    event: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>,
-    id: string
-  ) => {
+  const handleTypeChange = (event: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>, id: string) => {
     dispatch(setBudgetItemType({ id: id, type: event.target.value }));
   };
 
-  const handleCategoryChange = (
-    event: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>,
-    id: string
-  ) => {
+  const handleCategoryChange = (event: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>, id: string) => {
     dispatch(setBudgetItemCategory({ id: id, category: event.target.value }));
   };
 
   const handleButtonClick = () => {
-    const error = budgetItems.find(
-      (item) =>
-        (item.type === null || item.category === null) && item.amount < 0
-    );
+    const error = budgetItems.find((item) => (item.type === null || item.category === null) && item.amount < 0);
     if (error) {
       enqueueSnackbar("Each budget item must have type and category", {
         variant: "error",
@@ -109,7 +104,6 @@ const NewMonthReview: FC = () => {
       });
       return;
     }
-    dispatch(populateBudget(new Date(month)));
     router.push(NEW_MONTH_SUMMARY_PATH);
   };
 
@@ -148,8 +142,7 @@ const NewMonthReview: FC = () => {
               select
               fullWidth
               value={item.type ? item.type : types[0]}
-              onChange={(event) => handleTypeChange(event, item.id)}
-            >
+              onChange={(event) => handleTypeChange(event, item.id)}>
               {types.map((option) => (
                 <MenuItem key={option} value={option}>
                   {option}
@@ -166,8 +159,7 @@ const NewMonthReview: FC = () => {
               fullWidth
               placeholder={"-"}
               value={item.category ? item.category : categories[0]}
-              onChange={(event) => handleCategoryChange(event, item.id)}
-            >
+              onChange={(event) => handleCategoryChange(event, item.id)}>
               {categories.map((option) => (
                 <MenuItem key={option} value={option}>
                   {option}
@@ -188,18 +180,14 @@ const NewMonthReview: FC = () => {
             <Typography variant={"h6"} sx={{ flexGrow: 1 }}>
               Review imported data
             </Typography>
-            <CalendarTodayOutlined
-              fontSize={"large"}
-              sx={{ color: "action.active", mr: 2, alignSelf: "center" }}
-            />
+            <CalendarTodayOutlined fontSize={"large"} sx={{ color: "action.active", mr: 2, alignSelf: "center" }} />
             <TextField
               id={`item-date-selection`}
               select
               value={month}
               onChange={(event) => {
                 setMonth(event.target.value);
-              }}
-            >
+              }}>
               {months.map((option: string) => (
                 <MenuItem key={option} value={option}>
                   {option}
@@ -218,20 +206,12 @@ const NewMonthReview: FC = () => {
                   <TableCell>Category</TableCell>
                 </TableRow>
               </TableHead>
-              <TableBody>
-                {budgetItems.map((row, index) => createRow(row, index))}
-              </TableBody>
+              <TableBody>{budgetItems.map((row, index) => createRow(row, index))}</TableBody>
             </Table>
           </TableContainer>
         </CardContent>
       </Card>
-      <Button
-        variant={"contained"}
-        size={"large"}
-        fullWidth
-        sx={{ marginTop: 5 }}
-        onClick={handleButtonClick}
-      >
+      <Button variant={"contained"} size={"large"} fullWidth sx={{ marginTop: 5 }} onClick={handleButtonClick}>
         Save
       </Button>
     </>

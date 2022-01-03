@@ -15,40 +15,33 @@ import {
   Typography,
 } from "@mui/material";
 import CancelIcon from "@mui/icons-material/Cancel";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../../../store";
 import BudgetItemField from "../../../../model/BudgetItemField";
 import { SELECT_PLACEHOLDER } from "../../../../utils/Constants";
+import { useAppSelector } from "../../../../store/hooks";
 import {
   getColumnLabels,
   getColumnsCount,
   getCsvData,
   setColumnLabel,
   setData,
-} from "../../../../store/new-month-slice";
+} from "../../../../store/csv-import-slice";
 
 const CsvTable: FC = () => {
-  const data = useSelector(getCsvData);
-  const columnLabels = useSelector(getColumnLabels);
-  const columnsCount = useSelector(getColumnsCount);
+  const data = useAppSelector(getCsvData);
+  const columnLabels = useAppSelector(getColumnLabels);
+  const columnsCount = useAppSelector(getColumnsCount);
   const dispatch = useDispatch<AppDispatch>();
 
-  const headerOptions = [
-    SELECT_PLACEHOLDER,
-    BudgetItemField.DATE,
-    BudgetItemField.TITLE,
-    BudgetItemField.AMOUNT,
-  ];
+  const headerOptions = [SELECT_PLACEHOLDER, BudgetItemField.DATE, BudgetItemField.TITLE, BudgetItemField.AMOUNT];
 
   const handleDeleteFromTable = (deleteIndex: number) => {
     const newData = data!.filter((el, index) => index != deleteIndex);
     dispatch(setData(newData));
   };
 
-  const handleSelectionChange = (
-    event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-    index: number
-  ) => {
+  const handleSelectionChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, index: number) => {
     dispatch(setColumnLabel({ index: index, selection: event.target.value }));
   };
 
@@ -63,8 +56,7 @@ const CsvTable: FC = () => {
             color="error"
             onClick={() => {
               handleDeleteFromTable(rowIndex);
-            }}
-          >
+            }}>
             <CancelIcon />
           </IconButton>
         </TableCell>
@@ -82,8 +74,7 @@ const CsvTable: FC = () => {
             select
             fullWidth
             value={columnLabels[i] ? columnLabels[i] : headerOptions[0]}
-            onChange={(event) => handleSelectionChange(event, i)}
-          >
+            onChange={(event) => handleSelectionChange(event, i)}>
             {headerOptions.map((option) => (
               <MenuItem key={option} value={option}>
                 {option}
@@ -102,13 +93,9 @@ const CsvTable: FC = () => {
       <TableContainer sx={{ marginTop: 5 }}>
         <Table>
           <TableHead>
-            <TableRow key={"header"}>
-              {createHeaderDropDowns(columnsCount)}
-            </TableRow>
+            <TableRow key={"header"}>{createHeaderDropDowns(columnsCount)}</TableRow>
           </TableHead>
-          <TableBody>
-            {data.map((row, index) => createRow(row, index))}
-          </TableBody>
+          <TableBody>{data.map((row, index) => createRow(row, index))}</TableBody>
         </Table>
       </TableContainer>
     );

@@ -1,9 +1,13 @@
 import { configureStore } from "@reduxjs/toolkit";
-import newMonthSlice from "./new-month-slice";
+import csvImportSlice from "./csv-import-slice";
+import importReviewSlice from "./import-review-slice";
+import summarySlice from "./summary-slice";
 
 const store = configureStore({
   reducer: {
-    newMonth: newMonthSlice.reducer,
+    csvImport: csvImportSlice.reducer,
+    review: importReviewSlice.reducer,
+    summary: summarySlice.reducer,
   },
 });
 

@@ -19,30 +19,18 @@ import { ChangeEvent, FC } from "react";
 import { useDispatch } from "react-redux";
 import { AccountItem } from "../../../model/AccountItem";
 import { useAppSelector } from "../../../store/hooks";
-import {
-  addAccount,
-  getBudget,
-  removeAccount,
-  setAccountAmount,
-  setAccountTitle,
-} from "../../../store/new-month-slice";
+import { addAccount, getBudget, removeAccount, setAccountAmount, setAccountTitle } from "../../../store/summary-slice";
 
 const NewMonthAccountInput: FC = () => {
   const theme = useTheme();
   const dispatch = useDispatch();
   const budget = useAppSelector(getBudget);
 
-  const handleAmountChange = (
-    event: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>,
-    id: string
-  ) => {
+  const handleAmountChange = (event: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>, id: string) => {
     dispatch(setAccountAmount({ id: id, amount: event.target.value }));
   };
 
-  const handleTitleChange = (
-    event: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>,
-    id: string
-  ) => {
+  const handleTitleChange = (event: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>, id: string) => {
     dispatch(setAccountTitle({ id: id, title: event.target.value }));
   };
 
@@ -71,8 +59,7 @@ const NewMonthAccountInput: FC = () => {
             color="error"
             onClick={() => {
               dispatch(removeAccount(item.id));
-            }}
-          >
+            }}>
             <CancelIcon />
           </IconButton>
         </TableCell>
@@ -92,9 +79,7 @@ const NewMonthAccountInput: FC = () => {
                 <TableCell />
               </TableRow>
             </TableHead>
-            <TableBody>
-              {budget.accounts.map((row, index) => createRow(row, index))}
-            </TableBody>
+            <TableBody>{budget.accounts.map((row, index) => createRow(row, index))}</TableBody>
           </Table>
         </TableContainer>
       );
@@ -107,9 +92,7 @@ const NewMonthAccountInput: FC = () => {
         <Grid item container xs={4} mt={2} justifyContent={"space-between"}>
           <Typography variant={"h6"}>Total</Typography>
           <Typography variant={"h6"}>
-            {budget.accounts
-              .map((account) => account.amount)
-              .reduce((sum, current) => sum + current)}
+            {budget.accounts.map((account) => account.amount).reduce((sum, current) => sum + current)}
           </Typography>
         </Grid>
       );
@@ -121,29 +104,15 @@ const NewMonthAccountInput: FC = () => {
       <CardContent>
         <Grid container>
           <Grid item xs={6}>
-            <Typography
-              variant={"h4"}
-              sx={{ color: theme.palette.primary.main }}
-            >
+            <Typography variant={"h4"} sx={{ color: theme.palette.primary.main }}>
               Accounts
             </Typography>
             <Typography mt={2}>
-              Adding all your accounts will help you to track total value of
-              your assets in time
+              Adding all your accounts will help you to track total value of your assets in time
             </Typography>
           </Grid>
-          <Grid
-            item
-            container
-            justifyContent={"flex-end"}
-            alignItems="start"
-            xs={6}
-          >
-            <Button
-              variant={"contained"}
-              size={"large"}
-              onClick={() => dispatch(addAccount())}
-            >
+          <Grid item container justifyContent={"flex-end"} alignItems="start" xs={6}>
+            <Button variant={"contained"} size={"large"} onClick={() => dispatch(addAccount())}>
               Add new
             </Button>
           </Grid>

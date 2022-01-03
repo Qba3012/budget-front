@@ -2,8 +2,8 @@ import { FC } from "react";
 import { Card, CardContent, Typography, useTheme } from "@mui/material";
 import { CSVReader } from "react-papaparse";
 import { ParseResult } from "papaparse";
-import { setData } from "../../../../store/new-month-slice";
 import { useAppDispatch } from "../../../../store/hooks";
+import { setData } from "../../../../store/csv-import-slice";
 
 const CsvImport: FC = () => {
   const dispatch = useAppDispatch();
@@ -13,12 +13,7 @@ const CsvImport: FC = () => {
     dispatch(setData(data));
   };
 
-  const handleOnError = (
-    err: any,
-    file: any,
-    inputElem: any,
-    reason: any
-  ) => {};
+  const handleOnError = (err: any, file: any, inputElem: any, reason: any) => {};
 
   const handleOnRemoveFile = (data: null, file?: any) => {
     dispatch(setData(null));
@@ -40,8 +35,7 @@ const CsvImport: FC = () => {
           addRemoveButton
           removeButtonColor={theme.palette.error.main}
           onRemoveFile={handleOnRemoveFile}
-          config={config}
-        >
+          config={config}>
           <span>Drop CSV file here or click to upload.</span>
         </CSVReader>
       </CardContent>
