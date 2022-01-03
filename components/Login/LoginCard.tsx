@@ -1,12 +1,7 @@
 import { FC, useState } from "react";
-import {
-  Button,
-  Card,
-  CardContent,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Box, Button, Card, CardContent, Grid, TextField, Typography } from "@mui/material";
 import { useRouter } from "next/router";
+import Image from "next/image";
 
 const LoginCard: FC = () => {
   const [login, setLogin] = useState("");
@@ -24,9 +19,10 @@ const LoginCard: FC = () => {
   return (
     <Card>
       <CardContent sx={{ display: "flex", flexDirection: "column" }}>
-        <Typography variant={"h5"} mb={5}>
-          Login
-        </Typography>
+        <Typography variant={"h5"}>Login</Typography>
+        <Box sx={{ width: "15rem", height: "15rem", position: "relative", alignSelf: "center" }}>
+          <Image alt={"background"} src={"/avatar.jpg"} layout="fill" width={"100"} height={"100"} />
+        </Box>
         <TextField
           value={login}
           error={isValidated && login == ""}
