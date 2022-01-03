@@ -14,14 +14,31 @@
     "@mui/core": "*",
     "@mui/icons-material": "^5.0.5",
     "@mui/material": "^5.0.6",
+    "@mui/styles": "^5.0.2",
+    "@reduxjs/toolkit": "^1.6.2",
+    "@types/axios": "^0.14.0",
+    "@types/papaparse": "^5.3.1",
+    "@types/react-vis": "^1.11.10",
+    "@types/uuid": "^8.3.1",
+    "axios": "^0.24.0",
     "next": "12.0.2",
+    "notistack": "^2.0.3",
+    "prettier": "^2.4.1",
     "react": "17.0.2",
-    "react-dom": "17.0.2"
+    "react-dom": "17.0.2",
+    "react-papaparse": "^3.17.2",
+    "react-redux": "^7.2.6",
+    "react-vis": "^1.11.7",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@types/react": "17.0.33",
     "eslint": "7.32.0",
     "eslint-config-next": "12.0.2",
     "typescript": "4.4.4"
+  },
+  "prettier": {
+    "printWidth": 120,
+    "bracketSameLine": true
   }
 }

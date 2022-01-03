@@ -1,10 +1,8 @@
-import Head from "next/head";
 import { FC } from "react";
-import Header from "../components/Header/Header";
+import Head from "next/head";
 import { Box } from "@mui/material";
-import MyDrawer from "../components/Drawer/MyDrawer";
 
-const MainLayout: FC = ({ children }) => {
+const LoginLayout: FC = ({ children }) => {
   return (
     <>
       <Head>
@@ -13,17 +11,13 @@ const MainLayout: FC = ({ children }) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main>
-        <MyDrawer />
         <Box
           component="section"
           sx={{
-            margin: "auto",
-            marginLeft: "18rem",
-            marginRight: "2rem",
-            marginBottom: 10,
+            width: "100vw",
+            height: "100vh",
           }}
         >
-          <Header />
           {children}
         </Box>
       </main>
@@ -31,4 +25,4 @@ const MainLayout: FC = ({ children }) => {
   );
 };
 
-export default MainLayout;
+export default LoginLayout;

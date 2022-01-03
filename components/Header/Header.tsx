@@ -1,41 +1,64 @@
-import { AppBar, IconButton, Toolbar } from "@mui/material";
-import MenuIcon from "@mui/icons-material/MenuOutlined";
-import { FC, useState } from "react";
-import MyDrawer from "../Drawer/MyDrawer";
+import {
+  AppBar,
+  Button,
+  IconButton,
+  Toolbar,
+  Typography,
+  useTheme,
+} from "@mui/material";
+import { FC } from "react";
+import { useRouter } from "next/router";
+import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
+import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 
 const Header: FC = () => {
-  const [open, setOpen] = useState(false);
-  const [isExpanded, setIsExpanded] = useState(false);
+  const router = useRouter();
+  const theme = useTheme();
 
-  const openCloseDrawer = () => {
-    setOpen(!open);
+  const handleLogout = () => {
+    router.push("/login");
   };
 
-  const expandDrawer = () => {
-    setIsExpanded(true);
-  };
-
-  const minimizeDrawer = () => {
-    setIsExpanded(false);
+  const renderTitle = () => {
+    switch (true) {
+      case router.pathname.includes("/new-month"):
+        return "New month";
+      case router.pathname.includes("/history"):
+        return "History";
+      default:
+        return "Dashboard";
+    }
   };
 
   return (
-    <>
-      <AppBar position="fixed" color="inherit" elevation={0} sx={{ zIndex: 1300 }}>
-        <Toolbar sx={{ justifyContent: "flex-end" }}>
-          <IconButton size="large" color="inherit" edge="start" aria-label="menu" onClick={openCloseDrawer}>
-            <MenuIcon fontSize="large" />
-          </IconButton>
-        </Toolbar>
-      </AppBar>
-      <MyDrawer
-        isOpen={open}
-        isExpanded={isExpanded}
-        onOpenClose={openCloseDrawer}
-        onExpandMenu={expandDrawer}
-        onMinimizeMenu={minimizeDrawer}
-      />
-    </>
+    <AppBar
+      position="relative"
+      color="transparent"
+      elevation={0}
+      sx={{ padding: "1rem 0" }}
+    >
+      <Toolbar
+        sx={{ justifyContent: "flex-end", paddingLeft: 0, paddingRight: 0 }}
+      >
+        <Typography
+          variant="h4"
+          sx={{ flexGrow: 1, color: theme.palette.common.black }}
+        >
+          {renderTitle()}
+        </Typography>
+        <IconButton sx={{ marginRight: "1.5rem" }}>
+          <SettingsOutlinedIcon />
+        </IconButton>
+        <Button
+          variant="outlined"
+          color={"primary"}
+          startIcon={<LogoutOutlinedIcon />}
+          onClick={handleLogout}
+        >
+          Logout
+        </Button>
+      </Toolbar>
+    </AppBar>
   );
 };
 
