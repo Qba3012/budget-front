@@ -1,51 +1,37 @@
-import { FC, useState } from "react";
-import {
-  Button,
-  Card,
-  CardContent,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { FC, useEffect } from "react";
+import { Box, Button, Card, CardContent, Typography } from "@mui/material";
 import { useRouter } from "next/router";
+import Image from "next/image";
+import { signIn, useSession } from "next-auth/react";
+import { AUTH_PROVIDER } from "../../utils/Constants";
 
 const LoginCard: FC = () => {
-  const [login, setLogin] = useState("");
-  const [password, setPassword] = useState("");
-  const [isValidated, setIsValidated] = useState(false);
   const router = useRouter();
+  const { data: session, status } = useSession();
+  const isAuthenticated = status == "authenticated";
+
+  useEffect(() => {
+    if (isAuthenticated && session) {
+      router.push(`/dashboard/${session.user?.name}`);
+    }
+  }, [isAuthenticated, session, router]);
 
   const handleButtonClick = () => {
-    setIsValidated(true);
-    if (login != "" && password != "") {
-      router.push("/");
-    }
+    signIn(AUTH_PROVIDER);
   };
 
   return (
     <Card>
       <CardContent sx={{ display: "flex", flexDirection: "column" }}>
-        <Typography variant={"h5"} mb={5}>
-          Login
-        </Typography>
-        <TextField
-          value={login}
-          error={isValidated && login == ""}
-          type={"text"}
-          label={"Login"}
-          onChange={(event) => setLogin(event.target.value)}
-          sx={{ mb: 5 }}
-        />
-        <TextField
-          value={password}
-          type={"password"}
-          error={isValidated && password == ""}
-          label={"Password"}
-          onChange={(event) => setPassword(event.target.value)}
-          sx={{ mb: 5 }}
-        />
-        <Button variant={"contained"} onClick={handleButtonClick}>
-          Login
-        </Button>
+        <Box sx={{ width: "15rem", height: "15rem", position: "relative", alignSelf: "center" }}>
+          <Image alt={"background"} src={"/avatar.jpg"} layout="fill" />
+        </Box>
+        {isAuthenticated && <Typography variant={"subtitle1"}>Loading...</Typography>}
+        {!isAuthenticated && (
+          <Button variant={"contained"} onClick={handleButtonClick}>
+            Login
+          </Button>
+        )}
       </CardContent>
     </Card>
   );

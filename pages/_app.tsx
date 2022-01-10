@@ -1,10 +1,23 @@
 import store from "../store";
+import { SessionProvider, useSession } from "next-auth/react";
 import { Provider } from "react-redux";
 import "../styles/globals.css";
 import type { AppProps } from "next/app";
 import { createTheme, responsiveFontSizes, ThemeProvider } from "@mui/material";
 import { SnackbarProvider } from "notistack";
 import { RED_GRADIENT } from "../utils/Constants";
+import { Component, FC, useEffect } from "react";
+import { useRouter } from "next/router";
+
+declare module "react" {
+  interface ComponentClass {
+    auth?: boolean;
+  }
+
+  interface FunctionComponent {
+    auth?: boolean;
+  }
+}
 
 declare module "@mui/material/styles" {
   interface Palette {
@@ -20,6 +33,7 @@ declare global {
     firstLetterToUpperCase(): string;
   }
 }
+
 let theme = createTheme({
   palette: {
     primary: {
@@ -58,13 +72,35 @@ theme = responsiveFontSizes(theme);
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <ThemeProvider theme={theme}>
-      <Provider store={store}>
-        <SnackbarProvider maxSnack={3}>
-          <Component {...pageProps} />
-        </SnackbarProvider>
-      </Provider>
+      <SessionProvider session={pageProps.session}>
+        <Provider store={store}>
+          <SnackbarProvider maxSnack={3}>
+            {Component.auth ? (
+              <Auth>
+                <Component {...pageProps} />
+              </Auth>
+            ) : (
+              <Component {...pageProps} />
+            )}
+          </SnackbarProvider>
+        </Provider>
+      </SessionProvider>
     </ThemeProvider>
   );
 }
+
+const Auth: FC = ({ children }) => {
+  const router = useRouter();
+  const { data: session, status } = useSession();
+  const isAuthenticated = status == "authenticated";
+
+  useEffect(() => {
+    if (!isAuthenticated || !session) {
+      router.push(`/`);
+    }
+  }, [session, router, isAuthenticated]);
+
+  return <>{isAuthenticated && children}</>;
+};
 
 export default MyApp;
