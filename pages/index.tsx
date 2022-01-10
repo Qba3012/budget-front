@@ -4,15 +4,12 @@ import React, { useEffect } from "react";
 import { NEW_MONTH_IMPORT_PATH } from "./new-month/import";
 import MonthSummary from "../components/Summary/MonthSummary";
 import MainLayout from "../layouts/MainLayout";
-import axios from "axios";
-import Budget from "../model/Budget";
 import { useRouter } from "next/router";
+import Repository from "../repository/Repository";
 
 export const HOME_PATH = "/";
 
-const Home: NextPage = ({
-  budget,
-}: InferGetStaticPropsType<typeof getStaticProps>) => {
+const Home: NextPage = ({ budget }: InferGetStaticPropsType<typeof getStaticProps>) => {
   const theme = useTheme();
   const router = useRouter();
 
@@ -36,11 +33,7 @@ const Home: NextPage = ({
     </>
   );
 
-  const component = budget ? (
-    <MonthSummary budget={JSON.parse(budget)} />
-  ) : (
-    placeholder
-  );
+  const component = budget ? <MonthSummary budget={JSON.parse(budget)} /> : placeholder;
 
   return <MainLayout>{component}</MainLayout>;
 };
@@ -48,16 +41,14 @@ const Home: NextPage = ({
 export default Home;
 
 export const getStaticProps: GetStaticProps = async () => {
-  const response = await axios.get(
-    (process.env.API_LATEST && process.env.API_LATEST) ||
-      "http://localhost:8080/budgets/latest"
-  );
-
-  if (response.status == 200 && response.data) {
+  try {
+    const budget = await Repository.budget.getLatest();
     return {
-      props: { budget: JSON.stringify(Budget.fromApiResponse(response.data)) },
+      props: { budget: JSON.stringify(budget) },
       revalidate: 60,
     };
+  } catch (error) {
+    console.error(error);
+    return { props: { budget: null } };
   }
-  return { props: { budget: null } };
 };

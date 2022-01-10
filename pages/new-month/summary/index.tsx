@@ -9,13 +9,12 @@ import { useSnackbar } from "notistack";
 import NewMonthAccountInput from "../../../components/NewMonth/NewMonthAccountInput/NewMonthAccountInput";
 import type { NextPage } from "next";
 import MainLayout from "../../../layouts/MainLayout";
-import axios from "axios";
-import { BudgetApiDto } from "../../../model/api/BudgetApiDto";
 import { getBudget, setBudget } from "../../../store/summary-slice";
 import { getCsvData } from "../../../store/csv-import-slice";
 import Budget from "../../../model/Budget";
 import { getAllBudgetItems } from "../../../store/import-review-slice";
 import { useAppDispatch, useAppSelector } from "../../../store/hooks";
+import Repository from "../../../repository/Repository";
 
 export const NEW_MONTH_SUMMARY_PATH = "/new-month/summary";
 
@@ -47,32 +46,19 @@ const NewMonthSummary: NextPage = () => {
     return false;
   };
 
-  const handleSaveButtonClick = () => {
+  const handleSaveButtonClick = async () => {
     const isError = validateBudget();
     if (!isError) {
-      const budgetDto = BudgetApiDto.fromBudget(budget);
-      axios
-        .post(
-          (process.env.NEXT_PUBLIC_BUDGET_API && process.env.NEXT_PUBLIC_BUDGET_API) || "http://localhost:8080/budgets",
-          budgetDto
-        )
-        .then((response) => {
-          if (response.status == 200) {
-            router.push("/?refresh=yes");
-          } else {
-            enqueueSnackbar(response.data?.message, {
-              variant: "error",
-              anchorOrigin: { vertical: "bottom", horizontal: "right" },
-            });
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-          enqueueSnackbar("Server error, try again later", {
-            variant: "error",
-            anchorOrigin: { vertical: "bottom", horizontal: "right" },
-          });
+      try {
+        await Repository.budget.saveBudget(budget);
+        router.push("/?refresh=yes");
+      } catch (error: any) {
+        console.error(error);
+        enqueueSnackbar(error.message ? error.message : "Server error. Try again later", {
+          variant: "error",
+          anchorOrigin: { vertical: "bottom", horizontal: "right" },
         });
+      }
     }
   };
 
