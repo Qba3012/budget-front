@@ -7,9 +7,7 @@ import { HistoryApiResponse } from "../../model/api/HistoryApiResponse";
 
 export const HISTORY_PATH = "/history";
 
-const History: NextPage = ({
-  history,
-}: InferGetStaticPropsType<typeof getStaticProps>) => {
+const History: NextPage = ({ history }: InferGetStaticPropsType<typeof getStaticProps>) => {
   return (
     <MainLayout>
       <Months history={JSON.parse(history) as HistoryApiResponse[]} />
@@ -17,12 +15,13 @@ const History: NextPage = ({
   );
 };
 
+History.auth = true;
+
 export default History;
 
 export const getStaticProps: GetStaticProps = async () => {
   const response = await axios.get(
-    (process.env.API_HISTORY && process.env.API_HISTORY) ||
-      "http://localhost:8080/budgets/history"
+    (process.env.API_HISTORY && process.env.API_HISTORY) || "http://localhost:8080/budgets/history"
   );
 
   if (response.status == 200 && response.data) {

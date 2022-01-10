@@ -26,4 +26,6 @@ const NewMonthBudgetItems: NextPage = () => {
   );
 };
 
+NewMonthBudgetItems.auth = true;
+
 export default NewMonthBudgetItems;

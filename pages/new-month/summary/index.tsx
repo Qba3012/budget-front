@@ -98,4 +98,6 @@ const NewMonthSummary: NextPage = () => {
   );
 };
 
+NewMonthSummary.auth = true;
+
 export default NewMonthSummary;
