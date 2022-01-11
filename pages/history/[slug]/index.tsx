@@ -6,6 +6,7 @@ import Budget from "../../../model/Budget";
 import { BudgetInterface } from "../../../model/BudgetInterface";
 import { HistoryApiResponse } from "../../../model/api/HistoryApiResponse";
 import { useRouter } from "next/router";
+import { AuthService } from "../../../auth/AuthService";
 
 const MonthDashboard: NextPage = ({ budget }: InferGetStaticPropsType<typeof getStaticProps>) => {
   const router = useRouter();
@@ -22,13 +23,18 @@ MonthDashboard.auth = true;
 export default MonthDashboard;
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
+  const token = await AuthService.getToken();
   const response = await axios.get(
-    `${(process.env.API_BUDGET && process.env.API_BUDGET) || "http://localhost:8080/budgets"}/${params?.slug}`
+    `${(process.env.API_BUDGET && process.env.API_BUDGET) || "http://localhost:8080/budgets"}/${params?.slug}`, {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    }
   );
 
   if (response.status == 200 && response.data) {
     return {
-      props: { budget: JSON.stringify(Budget.fromApiResponse(response.data)) },
+      props: { budget: JSON.stringify(Budget.fromApiResponse(response.data)) }
     };
   }
   return { props: { budget: null } };
@@ -47,13 +53,13 @@ export const getStaticPaths: GetStaticPaths = async () => {
       .map((month) => {
         return {
           params: {
-            slug: month.slug,
-          },
+            slug: month.slug
+          }
         };
       });
   }
   return {
     paths: paths,
-    fallback: "blocking",
+    fallback: "blocking"
   };
 };

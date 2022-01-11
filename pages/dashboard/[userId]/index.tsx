@@ -8,6 +8,7 @@ import MainLayout from "../../../layouts/MainLayout";
 import axios from "axios";
 import Budget from "../../../model/Budget";
 import { useRouter } from "next/router";
+import { AuthService } from "../../../auth/AuthService";
 
 export const DASHBOARD_PATH = "/dashboard/";
 
@@ -45,23 +46,29 @@ Home.auth = true;
 export default Home;
 
 export const getStaticProps: GetStaticProps = async () => {
+  const token = await AuthService.getToken();
   const response = await axios.get(
-    (process.env.API_LATEST && process.env.API_LATEST) || "http://localhost:8080/budgets/latest"
+    (process.env.API_LATEST && process.env.API_LATEST) || "http://localhost:8080/budgets/latest", {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    }
   );
 
   if (response.status == 200 && response.data) {
     return {
       props: { budget: JSON.stringify(Budget.fromApiResponse(response.data)) },
-      revalidate: 60,
+      revalidate: 60
     };
   }
   return { props: { budget: null } };
 };
 
 export const getStaticPaths: GetStaticPaths = async () => {
+  const token = await AuthService.getToken();
   const paths = [{ params: { userId: "Test" } }];
   return {
     paths: paths,
-    fallback: "blocking",
+    fallback: "blocking"
   };
 };
