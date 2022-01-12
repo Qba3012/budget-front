@@ -18,16 +18,25 @@ const MonthDashboard: NextPage = ({ budget }: InferGetStaticPropsType<typeof get
 export default MonthDashboard;
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
-  const response = await axios.get(
-    `${(process.env.API_BUDGET && process.env.API_BUDGET) || "http://localhost:8080/budgets"}/${params?.slug}`
-  );
-
-  if (response.status == 200 && response.data) {
-    return {
-      props: { budget: JSON.stringify(Budget.fromApiResponse(response.data)) },
-    };
+  let param = "";
+  if (params?.slug) {
+    if (Array.isArray(params.slug) && params.slug.length > 0) {
+      param = params.slug[0];
+    } else if (!Array.isArray(params.slug)) {
+      param = params.slug;
+    }
   }
-  return { props: { budget: null } };
+
+  try {
+    const budget = await Repository.budget.getBySlug(param);
+    return {
+      props: { budget: JSON.stringify(budget) },
+      revalidate: 60,
+    };
+  } catch (error) {
+    console.error(error);
+    return { props: { budget: null } };
+  }
 };
 
 export const getStaticPaths: GetStaticPaths = async () => {

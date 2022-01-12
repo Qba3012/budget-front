@@ -1,13 +1,5 @@
 import { FC } from "react";
-import {
-  Box,
-  Button,
-  Card,
-  CardContent,
-  Divider,
-  Typography,
-  useTheme,
-} from "@mui/material";
+import { Box, Button, Card, CardContent, Divider, Typography, useTheme } from "@mui/material";
 import AccountBalanceWalletOutlinedIcon from "@mui/icons-material/AccountBalanceWalletOutlined";
 import AttachMoneyOutlinedIcon from "@mui/icons-material/AttachMoneyOutlined";
 import { NEW_MONTH_REVIEW_PATH } from "../../pages/new-month/review";
@@ -16,15 +8,10 @@ type Props = {
   allIncomesValue: number;
   allExpensesValue: number;
   month: string;
-  handleSaveAction?: () => void | undefined;
+  handleSaveAction?: () => Promise<void | undefined>;
 };
 
-const MonthHeaderSummary: FC<Props> = ({
-  allIncomesValue,
-  allExpensesValue,
-  month,
-  handleSaveAction,
-}) => {
+const MonthHeaderSummary: FC<Props> = ({ allIncomesValue, allExpensesValue, month, handleSaveAction }) => {
   const theme = useTheme();
 
   return (
@@ -34,8 +21,7 @@ const MonthHeaderSummary: FC<Props> = ({
           sx={{
             display: "flex",
             alignItems: "center",
-          }}
-        >
+          }}>
           <Typography variant={"h4"} sx={{ flexGrow: 1 }}>
             {month}
           </Typography>
@@ -45,15 +31,10 @@ const MonthHeaderSummary: FC<Props> = ({
             <Button
               variant={"outlined"}
               href={NEW_MONTH_REVIEW_PATH}
-              sx={{ marginRight: 2, marginTop: 2, width: "15%" }}
-            >
+              sx={{ marginRight: 2, marginTop: 2, width: "15%" }}>
               Edit
             </Button>
-            <Button
-              variant={"contained"}
-              sx={{ marginTop: 2, width: "15%" }}
-              onClick={handleSaveAction}
-            >
+            <Button variant={"contained"} sx={{ marginTop: 2, width: "15%" }} onClick={handleSaveAction}>
               Save
             </Button>
           </>
@@ -63,8 +44,7 @@ const MonthHeaderSummary: FC<Props> = ({
             display: "flex",
             alignItems: "center",
             mt: 8,
-          }}
-        >
+          }}>
           <AttachMoneyOutlinedIcon
             fontSize={"large"}
             sx={{
@@ -78,11 +58,7 @@ const MonthHeaderSummary: FC<Props> = ({
             }}
           />
           <Typography variant={"h6"}>Expenses</Typography>
-          <Typography
-            variant={"h4"}
-            sx={{ flexGrow: 1, color: theme.palette.warning.main }}
-            textAlign="end"
-          >
+          <Typography variant={"h4"} sx={{ flexGrow: 1, color: theme.palette.warning.main }} textAlign="end">
             {allExpensesValue && allExpensesValue.toLocaleString()}
           </Typography>
         </Box>
@@ -92,8 +68,7 @@ const MonthHeaderSummary: FC<Props> = ({
             display: "flex",
             alignItems: "center",
             mb: 5,
-          }}
-        >
+          }}>
           <AccountBalanceWalletOutlinedIcon
             fontSize={"large"}
             sx={{
@@ -107,11 +82,7 @@ const MonthHeaderSummary: FC<Props> = ({
             }}
           />
           <Typography variant={"h6"}>Incomes</Typography>
-          <Typography
-            variant={"h4"}
-            sx={{ flexGrow: 1, color: theme.palette.secondary.main }}
-            textAlign="end"
-          >
+          <Typography variant={"h4"} sx={{ flexGrow: 1, color: theme.palette.secondary.main }} textAlign="end">
             {allIncomesValue && allIncomesValue.toLocaleString()}
           </Typography>
         </Box>
