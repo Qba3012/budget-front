@@ -2,7 +2,7 @@ import { FC } from "react";
 import { Box, Button, Card, CardContent, Divider, Typography, useTheme } from "@mui/material";
 import AccountBalanceWalletOutlinedIcon from "@mui/icons-material/AccountBalanceWalletOutlined";
 import AttachMoneyOutlinedIcon from "@mui/icons-material/AttachMoneyOutlined";
-import { NEW_MONTH_REVIEW_PATH } from "../../pages/new-month/review";
+import { useRouter } from "next/router";
 
 type Props = {
   allIncomesValue: number;
@@ -13,6 +13,7 @@ type Props = {
 
 const MonthHeaderSummary: FC<Props> = ({ allIncomesValue, allExpensesValue, month, handleSaveAction }) => {
   const theme = useTheme();
+  const router = useRouter();
 
   return (
     <Card>
@@ -30,7 +31,7 @@ const MonthHeaderSummary: FC<Props> = ({ allIncomesValue, allExpensesValue, mont
           <>
             <Button
               variant={"outlined"}
-              href={NEW_MONTH_REVIEW_PATH}
+              onClick={() => router.back()}
               sx={{ marginRight: 2, marginTop: 2, width: "15%" }}>
               Edit
             </Button>

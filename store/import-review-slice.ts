@@ -7,10 +7,15 @@ import { RootState } from "./index";
 
 type INITIAL_STATE_TYPE = {
   budgetItems: BudgetItem[];
+  date: string;
 };
 
 const INITIAL_STATE: INITIAL_STATE_TYPE = {
   budgetItems: [],
+  date: new Date().toLocaleDateString("en-EN", {
+    month: "long",
+    year: "numeric",
+  }),
 };
 
 const importReviewSlice = createSlice({
@@ -19,6 +24,9 @@ const importReviewSlice = createSlice({
   reducers: {
     setData(state, action: PayloadAction<BudgetItem[]>) {
       state.budgetItems = action.payload;
+    },
+    setDate(state, action: PayloadAction<string>) {
+      state.date = action.payload;
     },
     setBudgetItemDate(state, action: PayloadAction<{ id: string; date: string }>) {
       const updatedBudgetItem = selectBudgetItemById(state, action.payload.id);
@@ -62,9 +70,11 @@ const selectBudgetItemById = (state: Draft<INITIAL_STATE_TYPE>, id: string) =>
   state.budgetItems.find((el) => el.id == id);
 
 export const getAllBudgetItems = (state: RootState) => state.review.budgetItems;
+export const getDate = (state: RootState) => new Date(state.review.date);
 
 export const {
   setData,
+  setDate,
   setBudgetItemCategory,
   setBudgetItemTitle,
   setBudgetItemAmount,

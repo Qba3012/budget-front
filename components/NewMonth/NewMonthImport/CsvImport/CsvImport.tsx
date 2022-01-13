@@ -15,9 +15,7 @@ const CsvImport: FC = () => {
 
   const handleOnError = (err: any, file: any, inputElem: any, reason: any) => {};
 
-  const handleOnRemoveFile = (data: null, file?: any) => {
-    dispatch(setData(null));
-  };
+  const handleOnRemoveFile = (data: null, file?: any) => {};
 
   const config = {
     delimiter: ";",

@@ -3,12 +3,12 @@ import { ParseResult } from "papaparse";
 import { RootState } from "./index";
 
 type INITIAL_STATE_TYPE = {
-  csvData: ParseResult<string>[] | null;
+  csvData: ParseResult<string>[];
   columnLabels: string[];
 };
 
 const INITIAL_STATE: INITIAL_STATE_TYPE = {
-  csvData: null,
+  csvData: [],
   columnLabels: [],
 };
 
@@ -20,13 +20,13 @@ const csvImportSlice = createSlice({
       reducer(
         state,
         action: PayloadAction<{
-          csvData: ParseResult<string>[] | null;
+          csvData: ParseResult<string>[];
         }>
       ) {
-        state.csvData = action.payload.csvData;
+        state.csvData.push(...action.payload.csvData);
       },
       prepare(results: ParseResult<string>[] | null) {
-        const csvData = results ? results.filter((result) => result.data.length > 2) : null;
+        const csvData = results ? results.filter((result) => result.data.length > 2) : [];
         return {
           payload: {
             csvData: csvData,

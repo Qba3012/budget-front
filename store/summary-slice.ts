@@ -20,6 +20,7 @@ const summarySlice = createSlice({
       if (account) {
         const index = state.budget.accounts.indexOf(account);
         state.budget.accounts.splice(index);
+        state.budget.totalAccountsValue -= account.amount;
       }
     },
     addAccount(state) {
@@ -37,6 +38,7 @@ const summarySlice = createSlice({
       const account = selectAccountItemById(state, action.payload.id);
       if (account && !isNaN(amountValue)) {
         account.amount = Math.round((amountValue + Number.EPSILON) * 100) / 100;
+        state.budget.totalAccountsValue += account.amount;
       }
     },
     setBudget(state, action: PayloadAction<BudgetInterface>) {

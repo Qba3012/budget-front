@@ -1,4 +1,4 @@
-import { ChangeEvent, FC, useEffect, useState } from "react";
+import { ChangeEvent, FC, useCallback, useEffect, useMemo } from "react";
 import {
   Box,
   Button,
@@ -28,36 +28,45 @@ import BudgetItemField from "../../../model/BudgetItemField";
 import { getColumnLabels, getCsvData } from "../../../store/csv-import-slice";
 import {
   getAllBudgetItems,
+  getDate,
   setBudgetItemAmount,
   setBudgetItemCategory,
   setBudgetItemDate,
   setBudgetItemTitle,
   setBudgetItemType,
   setData,
+  setDate,
 } from "../../../store/import-review-slice";
-
-const months = [] as string[];
-
-for (let i = 0; i < 12; i++) {
-  const today = new Date();
-  today.setMonth(today.getMonth() - i);
-  months[i] = today.toLocaleDateString("en-EN", {
-    month: "long",
-    year: "numeric",
-  });
-}
+import { shallowEqual } from "react-redux";
 
 const NewMonthReview: FC = () => {
-  const [month, setMonth] = useState(months[0]);
-  const csvData = useAppSelector(getCsvData);
+  const csvData = useAppSelector(getCsvData, shallowEqual);
   const columnLabels = useAppSelector(getColumnLabels);
   const budgetItems = useAppSelector(getAllBudgetItems);
+  const date = useAppSelector(getDate);
   const dispatch = useAppDispatch();
   const router = useRouter();
   const { enqueueSnackbar } = useSnackbar();
-  const types = [SELECT_PLACEHOLDER, Type.REGULAR, Type.VARIABLE];
 
+  const types = [SELECT_PLACEHOLDER, Type.REGULAR, Type.VARIABLE];
   const categories = [SELECT_PLACEHOLDER, Category.CAR, Category.GROCERY, Category.MEDICAL, Category.TRAVEL];
+
+  const getDateLabel = useCallback((date: Date) => {
+    return date.toLocaleDateString("en-EN", {
+      month: "long",
+      year: "numeric",
+    });
+  }, []);
+
+  const months = useMemo(() => {
+    const months = [] as string[];
+    for (let i = 0; i < 12; i++) {
+      const today = new Date();
+      today.setMonth(today.getMonth() - i);
+      months[i] = getDateLabel(today);
+    }
+    return months;
+  }, [getDateLabel]);
 
   useEffect(() => {
     if (!csvData) {
@@ -77,6 +86,10 @@ const NewMonthReview: FC = () => {
 
   const handleDateChange = (event: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>, id: string) => {
     dispatch(setBudgetItemDate({ id: id, date: event.target.value }));
+  };
+
+  const handleMonthChange = (event: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
+    dispatch(setDate(event.target.value));
   };
 
   const handleTitleChange = (event: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>, id: string) => {
@@ -184,9 +197,9 @@ const NewMonthReview: FC = () => {
             <TextField
               id={`item-date-selection`}
               select
-              value={month}
+              value={getDateLabel(date)}
               onChange={(event) => {
-                setMonth(event.target.value);
+                handleMonthChange(event);
               }}>
               {months.map((option: string) => (
                 <MenuItem key={option} value={option}>
@@ -211,9 +224,20 @@ const NewMonthReview: FC = () => {
           </TableContainer>
         </CardContent>
       </Card>
-      <Button variant={"contained"} size={"large"} fullWidth sx={{ marginTop: 5 }} onClick={handleButtonClick}>
-        Save
-      </Button>
+      <Box sx={{ display: "flex", marginTop: 5 }}>
+        <Button
+          variant={"contained"}
+          color={"inherit"}
+          size={"large"}
+          sx={{ marginRight: 2 }}
+          fullWidth
+          onClick={() => router.back()}>
+          Back
+        </Button>
+        <Button variant={"contained"} size={"large"} sx={{ marginLeft: 2 }} fullWidth onClick={handleButtonClick}>
+          Next
+        </Button>
+      </Box>
     </>
   );
 };
