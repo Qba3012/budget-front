@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 import CsvImport from "../../../components/NewMonth/NewMonthImport/CsvImport/CsvImport";
 import NewMonthStepper from "../../../components/NewMonth/NewMonthStepper/NewMonthStepper";
 import { NEW_MONTH_REVIEW_PATH } from "../review";
-import { useAppDispatch, useAppSelector } from "../../../store/hooks";
+import { useAppSelector } from "../../../store/hooks";
 import { NextPage } from "next";
 import MainLayout from "../../../layouts/MainLayout";
 import { ParseResult } from "papaparse";
@@ -16,7 +16,6 @@ import { getColumnLabels, getCsvData } from "../../../store/csv-import-slice";
 export const NEW_MONTH_IMPORT_PATH = "/new-month/import";
 
 const NewMonthImportPage: NextPage = () => {
-  const dispatch = useAppDispatch();
   const router = useRouter();
   const data = useAppSelector(getCsvData);
   const selectionValues = useAppSelector(getColumnLabels);
@@ -54,7 +53,7 @@ const NewMonthImportPage: NextPage = () => {
       {data && <CsvTable />}
       {data && (
         <Button variant={"contained"} size={"large"} fullWidth sx={{ marginTop: 5 }} onClick={handleButtonClick}>
-          Add +
+          Next
         </Button>
       )}
     </MainLayout>

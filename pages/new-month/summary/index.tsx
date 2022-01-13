@@ -12,7 +12,7 @@ import MainLayout from "../../../layouts/MainLayout";
 import { getBudget, setBudget } from "../../../store/summary-slice";
 import { getCsvData } from "../../../store/csv-import-slice";
 import Budget from "../../../model/Budget";
-import { getAllBudgetItems } from "../../../store/import-review-slice";
+import { getAllBudgetItems, getDate } from "../../../store/import-review-slice";
 import { useAppDispatch, useAppSelector } from "../../../store/hooks";
 import Repository from "../../../repository/Repository";
 
@@ -20,6 +20,7 @@ export const NEW_MONTH_SUMMARY_PATH = "/new-month/summary";
 
 const NewMonthSummary: NextPage = () => {
   const budgetItems = useAppSelector(getAllBudgetItems);
+  const date = useAppSelector(getDate);
   const budget = useAppSelector(getBudget);
   const csvData = useAppSelector(getCsvData);
   const dispatch = useAppDispatch();
@@ -64,7 +65,7 @@ const NewMonthSummary: NextPage = () => {
 
   useEffect(() => {
     if (!csvData) router.push(NEW_MONTH_IMPORT_PATH);
-    const budget = Budget.fromBudgetItems(new Date(), budgetItems);
+    const budget = Budget.fromBudgetItems(date, budgetItems);
     dispatch(setBudget({ ...budget }));
   }, []);
 
